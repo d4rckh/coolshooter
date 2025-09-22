@@ -42,16 +42,16 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
                     dy /= length;
                 }
 
-                // Add player velocity in the same direction
-                double playerVelX = velX * getSpeed();
-                double playerVelY = velY * getSpeed();
+                // // Add player velocity in the same direction
+                // double playerVelX = velX * getSpeed();
+                // double playerVelY = velY * getSpeed();
 
-                // Scale player's velocity along the shooting direction
-                double dot = dx * playerVelX + dy * playerVelY;
-                double addedSpeedX = dx * dot / Math.sqrt(dx * dx + dy * dy);
-                double addedSpeedY = dy * dot / Math.sqrt(dx * dx + dy * dy);
+                // // Scale player's velocity along the shooting direction
+                // double dot = dx * playerVelX + dy * playerVelY;
+                // double addedSpeedX = dx * dot / Math.sqrt(dx * dx + dy * dy);
+                // double addedSpeedY = dy * dot / Math.sqrt(dx * dx + dy * dy);
 
-                gun.shoot(dx, dy, addedSpeedX, addedSpeedY); // <-- Pass extra velocity
+                gun.shoot(dx, dy);
             }
             shoot = false;
         }

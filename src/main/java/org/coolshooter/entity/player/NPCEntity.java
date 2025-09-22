@@ -46,7 +46,7 @@ public class NPCEntity extends PlayerEntity {
             // Shoot randomly at player
             shootCooldown -= delta;
             if (shootCooldown <= 0 && gun != null) {
-                // gun.shoot(vx, vy);
+                gun.shoot(vx, vy);
                 shootCooldown = 0.5 + random.nextDouble() * 1.5;
             }
 

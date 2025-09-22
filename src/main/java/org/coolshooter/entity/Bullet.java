@@ -14,90 +14,78 @@ import org.coolshooter.entity.player.PlayerEntity;
 
 @Slf4j
 public class Bullet extends RenderableCollidableEntity {
-    private double velX;
-    private double velY;
-    private double extraVelX;
-    private double extraVelY;
+    private final double velX;
+    private final double velY;
+    private final double extraVelX;
+    private final double extraVelY;
     @Getter
     private final Gun originGun;
-    private double travelledX;
-    private double travelledY;
+    private double travelledDistance = 0;
     @Getter
     private final int damage = 10;
 
-    public Bullet(Game game, Color color, Gun gun, Position playerPos,
+    public Bullet(Game game, Color color, Gun gun, Position pos,
                   double velX, double velY, double extraVelX, double extraVelY) {
-        super(game,
-                playerPos.getX() + 25 + velX * 25,
-                playerPos.getY() + 25 + velY * 25);
+        super(game, pos.getX() + 25 + velX * 25, pos.getY() + 25 + velY * 25);
 
         this.originGun = gun;
-        this.velX = velX;
-        this.velY = velY;
+        this.velX = velX * gun.getSpeed();
+        this.velY = velY * gun.getSpeed();
         this.extraVelX = extraVelX;
         this.extraVelY = extraVelY;
 
-        // Use RenderableEntity customization
         setColor(color);
-        setHeight(10);
         setWidth(10);
+        setHeight(10);
         setShape(ShapeType.OVAL);
     }
 
     @Override
     public void init() {
-        // nothing needed for now
+        // Nothing needed
     }
 
     @Override
     public void update(double delta) {
-        // Apply damping to base velocity only (optional)
-        double damping = 0.98; 
-        double speedX = velX * originGun.getSpeed() + extraVelX;
-        double speedY = velY * originGun.getSpeed() + extraVelY;
+        double dx = velX + extraVelX;
+        double dy = velY + extraVelY;
 
-        // Update position
-        getPosition().setX(x -> x + speedX * delta);
-        getPosition().setY(y -> y + speedY * delta);
+        getPosition().setX(x -> x + dx * delta);
+        getPosition().setY(y -> y + dy * delta);
 
-        travelledX += speedX * delta;
-        travelledY += speedY * delta;
+        travelledDistance += Math.sqrt(dx * dx + dy * dy) * delta;
 
-        // Reduce base velocity for next frame
-        velX *= damping;
-        velY *= damping;
-
-        // Optionally, extraVel can stay constant or decay (here it stays constant)
-        // extraVelX *= damping;
-        // extraVelY *= damping;
-
-        // Destroy bullet if travelled far enough
-        if (Math.sqrt(travelledX * travelledX + travelledY * travelledY) >= originGun.getMaxDistance() ||
-            (Math.abs(speedX) <= 0.05 && Math.abs(speedY) <= 0.05)) {
+        // Destroy if max distance reached
+        if (travelledDistance >= originGun.getMaxDistance()) {
             destroy();
         }
     }
 
     @Override
     public void onCollision(RenderableCollidableEntity entity) {
-        if (entity == originGun.getOwner())
-            return;
+        // Ignore the owner
+        if (entity == originGun.getOwner()) return;
 
-        if (entity instanceof NPCEntity && originGun.getOwner() instanceof NPCEntity)
-            return;
+        // Prevent friendly fire for NPCs
+        if (entity instanceof NPCEntity && originGun.getOwner() instanceof NPCEntity) return;
 
+        // Handle player hit
         if (entity instanceof PlayerEntity player) {
-            player.takeDamage(this.damage);
-            player.knockback(velX + extraVelX, velY + extraVelY, this.originGun.getKnockbackStrength());
+            log.info("hit");
 
-            // Add hit effect
+            destroy();
+            
+            player.takeDamage(this.damage);
+            player.knockback(velX, velY, originGun.getKnockbackStrength());
+
+            // Add visual hit effect
             getGame().addEntity(new RenderableEffectEntity(
                     getGame(),
                     new Position(getPosition().getX(), getPosition().getY()),
                     0.3,
-                    this.getColor()));
+                    this.getColor()
+            ));
 
-            this.destroy();
         }
     }
 }

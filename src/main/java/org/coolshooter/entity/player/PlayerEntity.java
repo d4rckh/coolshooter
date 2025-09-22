@@ -2,6 +2,7 @@ package org.coolshooter.entity.player;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 
@@ -10,10 +11,13 @@ import org.coolshooter.domain.GameScene;
 import org.coolshooter.entity.Gun;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
 
+@Slf4j
 public abstract class PlayerEntity extends RenderableCollidableEntity {
     @Setter @Getter
     protected int speed = 500;
+    @Getter
     protected double velX = 0;
+    @Getter
     protected double velY = 0;
     @Setter
     @Getter

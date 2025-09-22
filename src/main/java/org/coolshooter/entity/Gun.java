@@ -19,10 +19,10 @@ public class Gun {
     private final int speed = 2000; // pixels/sec
 
     @Getter
-    private final double knockbackStrength = 700;
+    private final double knockbackStrength = 0.5;
 
     @Getter
-    private final double maxDistance = 500; // pixels
+    private final double maxDistance = 300; // pixels
 
     @Setter
     private Color bulletColor = Color.YELLOW;
@@ -38,25 +38,31 @@ public class Gun {
         }
     }
 
-    public void shoot(double dirX, double dirY, double extraVelX, double extraVelY) {
+    public void shoot(double dirX, double dirY) {
         if (timeSinceLastShot >= cooldown) {
-            // Create a bullet at the owner's position
+            // Normalize direction
+            double length = Math.sqrt(dirX * dirX + dirY * dirY);
+            if (length != 0) {
+                dirX /= length;
+                dirY /= length;
+            }
+
+            // Take current player velocity
+            double extraVelX = owner.getVelX() * owner.getSpeed();
+            double extraVelY = owner.getVelY() * owner.getSpeed();
+
             Bullet bullet = new Bullet(
-                    this.game,
+                    owner.getGame(),
                     bulletColor,
                     this,
                     owner.getPosition(),
-                    dirX, // base direction X
-                    dirY, // base direction Y
-                    extraVelX, // extra velocity X (e.g., player movement)
-                    extraVelY // extra velocity Y
-            );
+                    dirX, dirY,
+                    extraVelX, extraVelY);
 
-            // Add bullet to the game
-            owner.getGame().addEntity(bullet);
+            owner.getGame().getEntityManager().addEntity(bullet);
 
-            // Reset shooting cooldown
             timeSinceLastShot = 0;
         }
     }
+
 }
