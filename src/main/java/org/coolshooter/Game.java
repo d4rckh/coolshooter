@@ -46,12 +46,16 @@ public class Game {
     @Getter
     private UserPlayerEntity userPlayerEntity;
 
+    @Getter
+    private final GameSettings gameSettings;
+
     public Game(JFrame frame) {
         this.panel = new GamePanel(this);
         this.camera = new Camera(0, 0);
         this.entityManager = new EntityManager(panel);
         this.entitySpawner = new EntitySpawner(this);
         this.timerManager = new TimerManager();
+        this.gameSettings = new GameSettings();
 
         panel.setBackground(Color.BLACK);
 
@@ -81,7 +85,7 @@ public class Game {
         // === Title ===
         UILabelEntity title = new UILabelEntity(this, new DynamicPosition(
                 panel,
-                p -> p.getWidth() / 2.0 - 80, // roughly center text
+                p -> p.getWidth() / 2.0 - 80,
                 p -> p.getHeight() / 2.0 - 160), "Customization");
         entityManager.addEntity(title);
 
@@ -95,8 +99,8 @@ public class Game {
         UIInputFieldEntity npcSpawnField = new UIInputFieldEntity(this, new DynamicPosition(
                 panel,
                 p -> p.getWidth() / 2.0 + 20,
-                p -> p.getHeight() / 2.0 - 100), 100);
-        // npcSpawnField.setText("5");
+                p -> p.getHeight() / 2.0 - 100), 100, UIInputFieldEntity.InputType.INTEGER);
+        npcSpawnField.setText(String.valueOf(this.gameSettings.getNpcSpawnRate()));
         entityManager.addEntity(npcSpawnField);
 
         // === Knockback Strength ===
@@ -109,8 +113,7 @@ public class Game {
         UIInputFieldEntity knockbackField = new UIInputFieldEntity(this, new DynamicPosition(
                 panel,
                 p -> p.getWidth() / 2.0 + 20,
-                p -> p.getHeight() / 2.0 - 40), 100);
-        // knockbackField.setText("5.0");
+                p -> p.getHeight() / 2.0 - 40), 100, UIInputFieldEntity.InputType.INTEGER);
         entityManager.addEntity(knockbackField);
 
         // === Gun Cooldown ===
@@ -123,8 +126,7 @@ public class Game {
         UIInputFieldEntity cooldownField = new UIInputFieldEntity(this, new DynamicPosition(
                 panel,
                 p -> p.getWidth() / 2.0 + 20,
-                p -> p.getHeight() / 2.0 + 20), 100);
-        // cooldownField.setText("300");
+                p -> p.getHeight() / 2.0 + 20), 100, UIInputFieldEntity.InputType.INTEGER);
         entityManager.addEntity(cooldownField);
 
         // === Apply Button ===
@@ -138,15 +140,16 @@ public class Game {
                 () -> {
                     try {
                         int npcInterval = Integer.parseInt(npcSpawnField.getText());
-                        double knockback = Double.parseDouble(knockbackField.getText());
-                        int cooldown = Integer.parseInt(cooldownField.getText());
+                        // double knockback = Double.parseDouble(knockbackField.getText());
+                        // int cooldown = Integer.parseInt(cooldownField.getText());
 
-                        // this.getSettings().setNpcSpawnInterval(npcInterval);
-                        // game.getSettings().setKnockbackStrength(knockback);
-                        // game.getSettings().setGunCooldown(cooldown);
+                        // Apply settings to gameSettings
+                        this.gameSettings.setNpcSpawnRate(npcInterval);
+                        // this.gameSettings.setKnockbackStrength(knockback);
+                        // this.gameSettings.setGunCooldown(cooldown);
 
                         log.info("Customization applied: NPC interval=" + npcInterval +
-                                "s, Knockback=" + knockback + ", Cooldown=" + cooldown + "ms");
+                                "s, Knockback=" + 0 + ", Cooldown=" + 0 + "ms");
 
                         this.setScene(GameScene.MENU);
                     } catch (NumberFormatException e) {
@@ -227,7 +230,7 @@ public class Game {
         this.userPlayerEntity = new UserPlayerEntity(this);
 
         this.timerManager.addTimer(
-                new GameTimer(2, true, e -> this.entitySpawner.spawnNPC()));
+                new GameTimer(() -> (double)this.gameSettings.getNpcSpawnRate(), true, e -> this.entitySpawner.spawnNPC()));
 
         entityManager.addEntity(userPlayerEntity);
         entityManager.addEntity(new UIPlayerHealthText(this));

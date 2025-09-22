@@ -6,6 +6,7 @@ import java.util.Random;
 import org.coolshooter.Game;
 import org.coolshooter.Position;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.gun.WeakGun;
 
 public class NPCEntity extends PlayerEntity {
     private final RenderableCollidableEntity entityToFollow;
@@ -15,13 +16,20 @@ public class NPCEntity extends PlayerEntity {
     public NPCEntity(Game game, Position position, RenderableCollidableEntity entityToFollow) {
         super(game, position.getX(), position.getY());
         this.entityToFollow = entityToFollow;
-        setColor(Color.RED);
+        setColor(Color.BLUE);
         setWidth(50);
         setHeight(50);
         setHp(50);
         setMaxHp(50);
-        setShape(ShapeType.OVAL);
+        setShape(ShapeType.RECTANGLE);
         setSpeed(400);
+    }
+
+    
+    @Override
+    public void init() {
+        super.init();
+        this.gun = new WeakGun(this);
     }
 
     @Override

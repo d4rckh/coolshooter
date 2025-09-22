@@ -8,12 +8,13 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.domain.GameScene;
-import org.coolshooter.entity.Gun;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.gun.Gun;
 
 @Slf4j
 public abstract class PlayerEntity extends RenderableCollidableEntity {
-    @Setter @Getter
+    @Setter
+    @Getter
     protected int speed = 500;
     @Getter
     protected double velX = 0;
@@ -35,7 +36,6 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
 
     @Override
     public void init() {
-        this.gun = new Gun(this);
     }
 
     public void knockback(double vx, double vy, double strength) {
@@ -92,8 +92,8 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
         super.render(g); // draw the player
 
         // Health bar dimensions
-        int barWidth = (int)(getWidth() * getGame().getCamera().getZoom());
-        int barHeight = (int)(7 * getGame().getCamera().getZoom());
+        int barWidth = (int) (getWidth() * getGame().getCamera().getZoom());
+        int barHeight = (int) (7 * getGame().getCamera().getZoom());
 
         // Position above the player's sprite
         int x = (int) getScreenPosition().getX();

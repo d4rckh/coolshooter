@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
+import org.coolshooter.entity.gun.DefaultGun;
 import org.coolshooter.entity.trait.Controllable;
 
 import java.awt.*;
@@ -12,9 +13,13 @@ import java.awt.event.ActionEvent;
 public class UserPlayerEntity extends PlayerEntity implements Controllable {
     private boolean shoot = false;
 
+    // Normalized direction vector (−1..1, 0 if idle)
+    private double dirX = 0;
+    private double dirY = 0;
+
     public UserPlayerEntity(Game game) {
         super(game, 500, 500);
-        setColor(Color.CYAN);
+        setColor(Color.blue);
         setWidth(50);
         setSpeed(500);
         setHeight(50);
@@ -23,8 +28,7 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
     @Override
     public void init() {
         super.init();
-
-        this.gun.setBulletColor(Color.magenta);
+        this.gun = new DefaultGun(this);
     }
 
     @Override
@@ -36,20 +40,12 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
                 Position mouseWorld = getGame().getCamera().toWorld(getGame().getPanelMouse());
                 double dx = mouseWorld.getX() - getPosition().getX();
                 double dy = mouseWorld.getY() - getPosition().getY();
+
                 double length = Math.sqrt(dx * dx + dy * dy);
                 if (length != 0) {
                     dx /= length;
                     dy /= length;
                 }
-
-                // // Add player velocity in the same direction
-                // double playerVelX = velX * getSpeed();
-                // double playerVelY = velY * getSpeed();
-
-                // // Scale player's velocity along the shooting direction
-                // double dot = dx * playerVelX + dy * playerVelY;
-                // double addedSpeedX = dx * dot / Math.sqrt(dx * dx + dy * dy);
-                // double addedSpeedY = dy * dot / Math.sqrt(dx * dx + dy * dy);
 
                 gun.shoot(dx, dy);
             }
@@ -73,7 +69,6 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
             public void mouseReleased(java.awt.event.MouseEvent e) {
                 shoot = false;
             }
-
         });
 
         // Movement flags
@@ -82,21 +77,27 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
         final boolean[] leftPressed = { false };
         final boolean[] rightPressed = { false };
 
-        // Update velocity based on flags
+        // Update velocity and normalized direction
         Runnable updateVelocity = () -> {
             velX = 0;
             velY = 0;
-            if (leftPressed[0])
-                velX -= 1;
-            if (rightPressed[0])
-                velX += 1;
-            if (upPressed[0])
-                velY -= 1;
-            if (downPressed[0])
-                velY += 1;
+            if (leftPressed[0]) velX -= 1;
+            if (rightPressed[0]) velX += 1;
+            if (upPressed[0]) velY -= 1;
+            if (downPressed[0]) velY += 1;
+
+            // Normalize and expose as dirX/dirY
+            double len = Math.sqrt(velX * velX + velY * velY);
+            if (len > 0) {
+                dirX = velX / len;
+                dirY = velY / len;
+            } else {
+                dirX = 0;
+                dirY = 0;
+            }
         };
 
-        // Keyboard movement
+        // Keyboard movement bindings
         im.put(KeyStroke.getKeyStroke("pressed W"), "upPressed");
         im.put(KeyStroke.getKeyStroke("released W"), "upReleased");
         im.put(KeyStroke.getKeyStroke("pressed S"), "downPressed");
@@ -155,4 +156,29 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
             }
         });
     }
+
+    @Override
+    public void renderShape(Graphics g) {
+        super.renderShape(g);
+
+        Position mouse = getGame().getPanelMouse();
+        if (mouse != null) {
+            int playerX = (int) getScreenPosition().getX() + getWidth() / 2;
+            int playerY = (int) getScreenPosition().getY() + getHeight() / 2;
+
+            g.setColor(Color.YELLOW); // aim line color
+            g.drawLine(playerX, playerY, (int) mouse.getX(), (int) mouse.getY());
+
+            // Optional: draw a crosshair at the mouse
+            int crossSize = 8;
+            g.drawLine((int) mouse.getX() - crossSize, (int) mouse.getY(),
+                    (int) mouse.getX() + crossSize, (int) mouse.getY());
+            g.drawLine((int) mouse.getX(), (int) mouse.getY() - crossSize,
+                    (int) mouse.getX(), (int) mouse.getY() + crossSize);
+        }
+    }
+
+    /** Get the normalized direction vector (safe for bullet inheritance, AI, etc.) */
+    public double getDirX() { return dirX; }
+    public double getDirY() { return dirY; }
 }

@@ -34,12 +34,18 @@ public class EntityManager {
 
     /** Update all entities and handle queued additions */
     public void update(double delta) {
-        // Update entities
-        for (Entity e : entities) {
+        // Make a snapshot of current entities
+        List<Entity> snapshot = new ArrayList<>(entities);
+
+        // Update all entities
+        for (Entity e : snapshot) {
             if (!e.isDestroyed()) {
                 e.update(delta);
             }
         }
+
+        // Remove destroyed entities
+        entities.removeIf(Entity::isDestroyed);
 
         // Initialize and add queued entities
         if (!entitiesToAdd.isEmpty()) {
@@ -72,10 +78,12 @@ public class EntityManager {
     /** Destroy all entities */
     public void clearEntities() {
         for (Entity e : entities) {
-            if (!e.isDestroyed()) e.destroy();
+            if (!e.isDestroyed())
+                e.destroy();
         }
         for (Entity e : entitiesToAdd) {
-            if (!e.isDestroyed()) e.destroy();
+            if (!e.isDestroyed())
+                e.destroy();
         }
         entities.clear();
         entitiesToAdd.clear();

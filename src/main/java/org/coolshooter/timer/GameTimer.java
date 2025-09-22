@@ -3,56 +3,60 @@ package org.coolshooter.timer;
 import lombok.Setter;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class GameTimer {
     private final Consumer<GameTimer> action;
-    /**
-     * -- SETTER --
-     * Set a new interval
-     */
-    @Setter
-    private double interval; // seconds
-    private double elapsed;  // seconds
     private final boolean repeat;
 
-    /**
-     * @param interval Time in seconds before triggering
-     * @param repeat   If true, resets automatically after triggering
-     * @param action   Code to run when timer triggers
-     */
+    private double elapsed;  // seconds
+
+    // Fixed interval mode
+    @Setter
+    private double interval; // seconds
+    private final Supplier<Double> intervalSupplier; // for dynamic interval
+
+    /** Fixed interval constructor */
     public GameTimer(double interval, boolean repeat, Consumer<GameTimer> action) {
         this.interval = interval;
         this.repeat = repeat;
         this.action = action;
+        this.intervalSupplier = null;
         this.elapsed = 0;
     }
 
-    /**
-     * Call every frame with delta time in seconds
-     */
+    /** Dynamic interval constructor */
+    public GameTimer(Supplier<Double> intervalSupplier, boolean repeat, Consumer<GameTimer> action) {
+        this.intervalSupplier = intervalSupplier;
+        this.repeat = repeat;
+        this.action = action;
+        this.elapsed = 0;
+        this.interval = 0; // will be ignored
+    }
+
+    /** Call every frame with delta time in seconds */
     public void update(double delta) {
         elapsed += delta;
-        if (elapsed >= interval) {
+        double currentInterval = (intervalSupplier != null) ? intervalSupplier.get() : interval;
+
+        if (elapsed >= currentInterval) {
             action.accept(this);
             if (repeat) {
-                elapsed -= interval; // reset but carry over extra time
+                elapsed -= currentInterval; // carry over extra time
             } else {
-                elapsed = interval; // stop at max
+                elapsed = currentInterval; // stop at max
             }
         }
     }
 
-    /**
-     * Reset the timer
-     */
+    /** Reset the timer */
     public void reset() {
         elapsed = 0;
     }
 
-    /**
-     * Check if timer has reached its interval
-     */
+    /** Check if timer has reached its interval */
     public boolean isFinished() {
-        return elapsed >= interval;
+        double currentInterval = (intervalSupplier != null) ? intervalSupplier.get() : interval;
+        return elapsed >= currentInterval;
     }
 }

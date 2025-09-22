@@ -15,7 +15,7 @@ import java.awt.event.*;
 
 @Slf4j
 public class UIInputFieldEntity extends RenderableEntity implements Controllable {
-    @Getter
+    @Getter @Setter
     private String text = "";
 
     @Setter
@@ -24,10 +24,19 @@ public class UIInputFieldEntity extends RenderableEntity implements Controllable
     private final int width;
     private final int height = 30;
 
-    public UIInputFieldEntity(Game game, Position pos, int width) {
+    private final InputType type;
+
+    private boolean valid = true; // tracks whether current input is valid
+
+    public UIInputFieldEntity(Game game, Position pos, int width, InputType type) {
         super(game, pos.getX(), pos.getY(), false);
         this.width = width;
+        this.type = type;
         setColor(Color.WHITE);
+    }
+
+    public enum InputType {
+        STRING, INTEGER
     }
 
     @Override
@@ -36,6 +45,20 @@ public class UIInputFieldEntity extends RenderableEntity implements Controllable
 
     @Override
     public void update(double delta) {
+    }
+
+    private void validateInput() {
+        switch (type) {
+            case STRING -> valid = !text.isEmpty(); // simple string validation
+            case INTEGER -> {
+                try {
+                    Integer.parseInt(text);
+                    valid = true;
+                } catch (NumberFormatException e) {
+                    valid = false;
+                }
+            }
+        }
     }
 
     @Override
@@ -48,7 +71,7 @@ public class UIInputFieldEntity extends RenderableEntity implements Controllable
         g.fillRect(x, y, width, height);
 
         // Border
-        g.setColor(focused ? Color.YELLOW : Color.GRAY);
+        g.setColor(focused ? (valid ? Color.YELLOW : Color.RED) : (valid ? Color.GRAY : Color.RED));
         g.drawRect(x, y, width, height);
 
         // Text
@@ -86,6 +109,7 @@ public class UIInputFieldEntity extends RenderableEntity implements Controllable
                 if (Character.isISOControl(c))
                     return; // ignore control chars
                 text += c;
+                validateInput();
             }
 
             @Override
@@ -99,7 +123,12 @@ public class UIInputFieldEntity extends RenderableEntity implements Controllable
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     focused = false; // lose focus on Enter
                 }
+                validateInput();
             }
         });
+    }
+
+    public boolean isValidInput() {
+        return valid;
     }
 }

@@ -1,35 +1,38 @@
-package org.coolshooter.entity;
+package org.coolshooter.entity.gun;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
 
-import org.coolshooter.Game;
+import org.coolshooter.entity.Bullet;
 import org.coolshooter.entity.player.PlayerEntity;
 
-public class Gun {
+public abstract class Gun {
     @Getter
-    private final PlayerEntity owner;
-    private final Game game;
-    private final double cooldown = 0.01; // seconds
-    private double timeSinceLastShot = 0;
+    protected final PlayerEntity owner;
+    protected final double cooldown; // seconds
+    protected double timeSinceLastShot = 0;
 
     @Getter
-    private final int speed = 2000; // pixels/sec
+    protected final int speed; // pixels/sec
 
     @Getter
-    private final double knockbackStrength = 0.5;
+    protected final double knockbackStrength;
 
     @Getter
-    private final double maxDistance = 300; // pixels
+    protected final double maxDistance; // pixels
 
     @Setter
-    private Color bulletColor = Color.YELLOW;
+    protected Color bulletColor;
 
-    public Gun(PlayerEntity owner) {
+    public Gun(PlayerEntity owner, double cooldown, int speed, double knockbackStrength, double maxDistance, Color bulletColor) {
         this.owner = owner;
-        this.game = owner.getGame();
+        this.cooldown = cooldown;
+        this.speed = speed;
+        this.knockbackStrength = knockbackStrength;
+        this.maxDistance = maxDistance;
+        this.bulletColor = bulletColor;
     }
 
     public void update(double delta) {
@@ -47,7 +50,7 @@ public class Gun {
                 dirY /= length;
             }
 
-            // Take current player velocity
+            // Include player velocity
             double extraVelX = owner.getVelX() * owner.getSpeed();
             double extraVelY = owner.getVelY() * owner.getSpeed();
 
@@ -64,5 +67,4 @@ public class Gun {
             timeSinceLastShot = 0;
         }
     }
-
 }

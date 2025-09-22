@@ -9,6 +9,7 @@ import org.coolshooter.Game;
 import org.coolshooter.Position;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
 import org.coolshooter.entity.effect.RenderableEffectEntity;
+import org.coolshooter.entity.gun.Gun;
 import org.coolshooter.entity.player.NPCEntity;
 import org.coolshooter.entity.player.PlayerEntity;
 
@@ -71,8 +72,6 @@ public class Bullet extends RenderableCollidableEntity {
 
         // Handle player hit
         if (entity instanceof PlayerEntity player) {
-            log.info("hit");
-
             destroy();
             
             player.takeDamage(this.damage);
