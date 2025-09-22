@@ -21,7 +21,7 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
         super(game, 500, 500);
         setColor(Color.blue);
         setWidth(50);
-        setSpeed(500);
+        setSpeed(400);
         setHeight(50);
     }
 
@@ -49,7 +49,6 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
 
                 gun.shoot(dx, dy);
             }
-            shoot = false;
         }
     }
 

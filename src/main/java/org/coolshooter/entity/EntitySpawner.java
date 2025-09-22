@@ -2,6 +2,7 @@ package org.coolshooter.entity;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
+import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.player.NPCEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,22 @@ public class EntitySpawner {
         game.getEntityManager().addEntity(npc);
 
         log.info("Spawning NPC at ({}, {})", npc.getPosition().getX(), npc.getPosition().getY());
+    }
+
+    public void spawnHealthCollectible() {
+        if (game.getUserPlayerEntity() == null)
+            return;
+
+        double playerX = game.getUserPlayerEntity().getPosition().getX();
+        double playerY = game.getUserPlayerEntity().getPosition().getY();
+
+        double offsetX = (Math.random() - 0.5) * 1000;
+        double offsetY = (Math.random() - 0.5) * 1000;
+
+        HealthCollectibleEntity health = new HealthCollectibleEntity(game, playerX + offsetX, playerY + offsetY);
+        game.getEntityManager().addEntity(health);
+
+        log.info("Spawning health collectible at ({}, {})", health.getPosition().getX(), health.getPosition().getY());
     }
 
 }

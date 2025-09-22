@@ -2,6 +2,7 @@ package org.coolshooter.entity.common;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -9,8 +10,10 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 import org.coolshooter.Game;
+import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.trait.Collidable;
 
+@Slf4j
 public abstract class RenderableCollidableEntity extends RenderableEntity implements Collidable {
     @Getter
     @Setter
@@ -73,15 +76,6 @@ public abstract class RenderableCollidableEntity extends RenderableEntity implem
             case RECTANGLE -> g.fillRect(x, y, w, h);
             case OVAL -> g.fillOval(x, y, w, h);
         }
-
-        // --- DEBUG: draw collision shape ---
-        // Graphics2D g2 = (Graphics2D) g.create();
-        // g2.setColor(new Color(255, 0, 0, 100)); // semi-transparent red
-        // Shape collisionShape = getCollisionShape();
-        // g2.fill(collisionShape); // draw filled shape for visibility
-        // g2.setColor(Color.RED);
-        // g2.draw(collisionShape); // draw outline
-        // g2.dispose();
     }
 
     public void onCollision(RenderableCollidableEntity entity) {

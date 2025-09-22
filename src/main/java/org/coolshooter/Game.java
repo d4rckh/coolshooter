@@ -9,6 +9,7 @@ import org.coolshooter.domain.GameScene;
 import org.coolshooter.entity.Entity;
 import org.coolshooter.entity.EntityManager;
 import org.coolshooter.entity.EntitySpawner;
+import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.player.UserPlayerEntity;
 import org.coolshooter.entity.ui.UIButtonEntity;
 import org.coolshooter.entity.ui.UIFpsText;
@@ -233,6 +234,11 @@ public class Game {
         this.timerManager.addTimer(
                 new GameTimer(() -> (double)this.gameSettings.getNpcSpawnRate(), true, e -> this.entitySpawner.spawnNPC()));
 
+        this.timerManager.addTimer(
+                new GameTimer(() -> (double)5, true, e -> this.entitySpawner.spawnHealthCollectible()));
+
+        this.entitySpawner.spawnHealthCollectible();
+
         entityManager.addEntity(userPlayerEntity);
         entityManager.addEntity(new UIPlayerHealthText(this));
         entityManager.addEntity(new UIFpsText(this));
@@ -266,12 +272,13 @@ public class Game {
 
     /** Update all entities and handle collisions */
     private void update(double delta) {
-        entityManager.update(delta);
-        entityManager.handleCollisions();
-
         if (scene == GameScene.PLAYING && userPlayerEntity != null) {
             camera.centerOn(userPlayerEntity.getPosition(), panel.getWidth(), panel.getHeight());
         }
+
+
+        entityManager.update(delta);
+        entityManager.handleCollisions();
 
         this.timerManager.update(delta);
     }

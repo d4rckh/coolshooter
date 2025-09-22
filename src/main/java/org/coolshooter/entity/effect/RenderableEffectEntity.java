@@ -14,7 +14,7 @@ public class RenderableEffectEntity extends RenderableEntity {
     private final double lifetime; // how long effect lasts (seconds)
     private double elapsed = 0; // time passed
 
-    private final RenderableCollidableEntity parent;
+    private final RenderableCollidableEntity followEntity;
     private final Position offset;
 
     @Getter
@@ -33,7 +33,7 @@ public class RenderableEffectEntity extends RenderableEntity {
         this.lifetime = lifetime;
         this.baseColor = color;
         this.offset = offset;
-        this.parent = parent;
+        this.followEntity = parent;
     }
 
     @Override
@@ -48,11 +48,11 @@ public class RenderableEffectEntity extends RenderableEntity {
             return;
         }
 
-        if (parent != null && offset != null) {
+        if (followEntity != null && offset != null) {
             // Follow parent's center
             this.setPosition(new Position(
-                    parent.getPosition().getX() + this.offset.getX(),
-                    parent.getPosition().getY() + this.offset.getY()));
+                    followEntity.getPosition().getX() + this.offset.getX(),
+                    followEntity.getPosition().getY() + this.offset.getY()));
         }
     }
 

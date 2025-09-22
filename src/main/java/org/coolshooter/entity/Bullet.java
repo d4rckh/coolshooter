@@ -25,12 +25,16 @@ public class Bullet extends RenderableCollidableEntity {
     @Getter
     private final int damage = 10;
 
+    private static int width = 10;
+    private static int height = 10;
+    
+
     public Bullet(Game game, Color color, Gun gun, Position pos,
             double velX, double velY, double extraVelX, double extraVelY) {
         super(game,
                 // Start at player center, then offset by half bullet size to align centers
-                pos.getX() + gun.getOwner().getWidth() / 2.0 - 5 + velX * 5,
-                pos.getY() + gun.getOwner().getHeight() / 2.0 - 5 + velY * 5);
+                gun.getOwner().getCenter().getX() - Bullet.width / 2 + velX * 5,
+                gun.getOwner().getCenter().getY() - Bullet.height / 2 + velY * 5);
 
         this.originGun = gun;
         this.velX = velX * gun.getSpeed();
@@ -39,8 +43,8 @@ public class Bullet extends RenderableCollidableEntity {
         this.extraVelY = extraVelY;
 
         setColor(color);
-        setWidth(10); // bullet width
-        setHeight(10); // bullet height
+        setWidth(Bullet.width); // bullet width
+        setHeight(Bullet.height); // bullet height
         setShape(ShapeType.OVAL);
     }
 
@@ -91,10 +95,11 @@ public class Bullet extends RenderableCollidableEntity {
             // Add visual hit effect
             getGame().addEntity(new RenderableEffectEntity(
                     getGame(),
+                    // Offset stored as position
+                    // TODO: store as something else
                     new Position(
-                        intersectionPoint.getX() - player.getPosition().getX(),
-                        intersectionPoint.getY() - player.getPosition().getY()
-                    ),
+                            intersectionPoint.getX() - player.getPosition().getX(),
+                            intersectionPoint.getY() - player.getPosition().getY()),
                     0.3,
                     this.getColor(),
                     player));

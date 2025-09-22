@@ -12,18 +12,14 @@ import org.coolshooter.entity.common.RenderableCollidableEntity;
 import org.coolshooter.entity.gun.Gun;
 
 @Slf4j
+@Getter
 public abstract class PlayerEntity extends RenderableCollidableEntity {
     @Setter
-    @Getter
-    protected int speed = 500;
-    @Getter
+    protected int speed = 600;
     protected double velX = 0;
-    @Getter
     protected double velY = 0;
     @Setter
-    @Getter
     protected int hp = 100;
-    @Getter
     @Setter
     protected int maxHp = 100;
     protected Gun gun;
@@ -41,6 +37,14 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
     public void knockback(double vx, double vy, double strength) {
         this.knockbackVX = vx * strength;
         this.knockbackVY = vy * strength;
+    }
+
+    public boolean heal(int hp) {
+        if (this.getHp() + hp > this.getMaxHp())
+            return false;
+
+        this.setHp(this.getHp() + hp);
+        return true;
     }
 
     @Override

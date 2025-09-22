@@ -17,13 +17,13 @@ public class NPCEntity extends PlayerEntity {
     public NPCEntity(Game game, Position position, RenderableCollidableEntity entityToFollow) {
         super(game, position.getX(), position.getY());
         this.entityToFollow = entityToFollow;
-        setColor(Color.BLUE);
+        setColor(Color.RED);
         setWidth(50);
         setHeight(50);
         setHp(50);
         setMaxHp(50);
-        setShape(ShapeType.RECTANGLE);
-        setSpeed(400);
+        setShape(ShapeType.OVAL);
+        setSpeed(500);
     }
 
 
@@ -47,11 +47,11 @@ public class NPCEntity extends PlayerEntity {
             if (length > 200) {
                 velX = vx;
                 velY = vy;
-
             } else {
                 velX = 0;
                 velY = 0;
             }
+            
             // Shoot randomly at player
             shootCooldown -= delta;
             if (shootCooldown <= 0 && gun != null) {
