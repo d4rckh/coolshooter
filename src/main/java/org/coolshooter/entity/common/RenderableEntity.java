@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.awt.*;
 
+import org.coolshooter.DynamicPosition;
 import org.coolshooter.Game;
 import org.coolshooter.Position;
 import org.coolshooter.entity.Entity;
@@ -27,11 +28,18 @@ public abstract class RenderableEntity extends Entity implements Renderable {
     @Setter
     protected int height = 50;
 
-    public RenderableEntity(Game game, double worldX, double worldY, boolean followWorld) {
+    public RenderableEntity(Game game, DynamicPosition position) {
+        super(game);
+        this.followWorld = false;
+        this.position = position;
+        this.screenPosition = position;
+    }
+
+    public RenderableEntity(Game game, double x, double y, boolean followWorld) {
         super(game);
         this.followWorld = followWorld;
-        this.position = new Position(worldX, worldY);
-        this.screenPosition = new Position(worldX, worldY);
+        this.position = new Position(x, y);
+        this.screenPosition = new Position(position.getX(), position.getY());
     }
 
     /**

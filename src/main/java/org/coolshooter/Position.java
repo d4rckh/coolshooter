@@ -22,10 +22,10 @@ public class Position {
     }
 
     public void setX(DoubleUnaryOperator updater) {
-        this.x = updater.applyAsDouble(this.x);
+        this.setX(updater.applyAsDouble(this.x));
     }
 
     public void setY(DoubleUnaryOperator updater) {
-        this.y = updater.applyAsDouble(this.y);
+        this.setY(updater.applyAsDouble(this.y));
     }
 }

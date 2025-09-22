@@ -12,9 +12,7 @@ import org.coolshooter.entity.EntitySpawner;
 import org.coolshooter.entity.player.UserPlayerEntity;
 import org.coolshooter.entity.ui.UIButtonEntity;
 import org.coolshooter.entity.ui.UIFpsText;
-import org.coolshooter.entity.ui.UIInputFieldEntity;
 import org.coolshooter.entity.ui.UIPlayerHealthText;
-import org.coolshooter.entity.ui.UISliderEntity;
 import org.coolshooter.timer.GameTimer;
 import org.coolshooter.timer.TimerManager;
 
@@ -27,10 +25,10 @@ public class Game {
 
     @Getter
     private final Camera camera;
-    
+
     @Getter
     private final EntityManager entityManager;
-    
+
     @Getter
     private final EntitySpawner entitySpawner;
 
@@ -96,25 +94,33 @@ public class Game {
         entityManager.clearEntities();
         timerManager.clearTimers();
 
-        UISliderEntity volumeSlider = new UISliderEntity(this, new Position(200, 400), 300);
-        this.entityManager.addEntity(volumeSlider);
+        // UISliderEntity volumeSlider = new UISliderEntity(this, new Position(200,
+        // 400), 300);
+        // this.entityManager.addEntity(volumeSlider);
 
-        UIInputFieldEntity nameField = new UIInputFieldEntity(this, new Position(200, 300), 250);
-        this.entityManager.addEntity(nameField);
+        // UIInputFieldEntity nameField = new UIInputFieldEntity(this, new Position(200,
+        // 300), 250);
+        // this.entityManager.addEntity(nameField);
 
         entityManager.addEntity(new UIButtonEntity(
                 this,
-                new Position(panel.getWidth() / 2 - 100, panel.getHeight() / 2 - 25),
+                new DynamicPosition(
+                        panel,
+                        p -> p.getWidth() / 2.0 - 100, // X: centered minus half button width
+                        p -> p.getHeight() / 2.0 - 25 // Y: centered minus half button height
+                ),
                 "Start Game",
                 () -> setState(GameState.PLAYING)));
 
         entityManager.addEntity(new UIButtonEntity(
                 this,
-                new Position(panel.getWidth() / 2 - 100, panel.getHeight() / 2 + 50),
+                new DynamicPosition(
+                        panel,
+                        p -> p.getWidth() / 2.0 - 100, // X stays same (aligned with "Start Game")
+                        p -> p.getHeight() / 2.0 + 50 // Y: offset lower
+                ),
                 "Exit",
-                () -> {
-                    System.exit(0);
-                }));
+                () -> System.exit(0)));
     }
 
     private void startGame() {
@@ -122,10 +128,9 @@ public class Game {
         timerManager.clearTimers();
 
         this.userPlayerEntity = new UserPlayerEntity(this);
-        
+
         this.timerManager.addTimer(
-            new GameTimer(2, true, e -> this.entitySpawner.spawnNPC())
-        );
+                new GameTimer(2, true, e -> this.entitySpawner.spawnNPC()));
 
         entityManager.addEntity(userPlayerEntity);
         entityManager.addEntity(new UIPlayerHealthText(this));

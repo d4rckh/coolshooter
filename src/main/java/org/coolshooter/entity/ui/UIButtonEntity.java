@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 
+import org.coolshooter.DynamicPosition;
 import org.coolshooter.Game;
-import org.coolshooter.Position;
 import org.coolshooter.entity.common.RenderableEntity;
 import org.coolshooter.entity.trait.Controllable;
 
@@ -22,8 +22,8 @@ public class UIButtonEntity extends RenderableEntity implements Controllable {
     private final int height = 50;
     private boolean hovered = false;
 
-    public UIButtonEntity(Game game, Position pos, String label, Runnable onClick) {
-        super(game, pos.getX(), pos.getY(), false);
+    public UIButtonEntity(Game game, DynamicPosition pos, String label, Runnable onClick) {
+        super(game, pos);
         this.label = label;
         this.onClick = onClick;
     }
@@ -67,7 +67,6 @@ public class UIButtonEntity extends RenderableEntity implements Controllable {
 
     @Override
     public void registerKeyBindings(JPanel panel) {
-        log.info("writing");
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -83,5 +82,10 @@ public class UIButtonEntity extends RenderableEntity implements Controllable {
                 hovered = isInside(e.getX(), e.getY());
             }
         });
+    }
+
+    @Override
+    public void beforeDestroy() {
+        
     }
 }
