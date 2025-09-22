@@ -25,6 +25,20 @@ public class Camera {
     }
 
     /**
+     * Convert world position to screen coordinates
+     */
+    public double toScreenX(double x) {
+        return ((x - offsetX) * zoom);
+    }
+
+    /**
+     * Convert world position to screen coordinates
+     */
+    public double toScreenY(double y) {
+        return ((y - offsetY) * zoom);
+    }
+
+    /**
      * Convert screen position to world coordinates
      */
     public Position toWorld(Position screenPos) {

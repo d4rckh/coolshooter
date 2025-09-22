@@ -1,17 +1,18 @@
 package org.coolshooter.entity.player;
 
 import java.awt.*;
-import java.util.Random;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
 import org.coolshooter.entity.gun.WeakGun;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class NPCEntity extends PlayerEntity {
     private final RenderableCollidableEntity entityToFollow;
-    private final Random random = new Random();
-    private double shootCooldown = 0;
+    private double shootCooldown = 1;
 
     public NPCEntity(Game game, Position position, RenderableCollidableEntity entityToFollow) {
         super(game, position.getX(), position.getY());
@@ -25,7 +26,7 @@ public class NPCEntity extends PlayerEntity {
         setSpeed(400);
     }
 
-    
+
     @Override
     public void init() {
         super.init();
@@ -35,15 +36,15 @@ public class NPCEntity extends PlayerEntity {
     @Override
     public void update(double delta) {
         if (entityToFollow != null && !entityToFollow.isDestroyed()) {
-            double dx = entityToFollow.getPosition().getX() - getPosition().getX();
-            double dy = entityToFollow.getPosition().getY() - getPosition().getY();
+            double dx = entityToFollow.getPosition().getX() + (entityToFollow.getWidth() / 2) - getPosition().getX() - this.getHeight() / 2;
+            double dy = entityToFollow.getPosition().getY() + (entityToFollow.getHeight() / 2) - getPosition().getY() - this.getWidth() / 2;
 
             double length = Math.sqrt(dx * dx + dy * dy);
 
             double vx = dx / length;
             double vy = dy / length;
 
-            if (length > 100) {
+            if (length > 200) {
                 velX = vx;
                 velY = vy;
 
@@ -55,11 +56,9 @@ public class NPCEntity extends PlayerEntity {
             shootCooldown -= delta;
             if (shootCooldown <= 0 && gun != null) {
                 gun.shoot(vx, vy);
-                shootCooldown = 0.5 + random.nextDouble() * 1.5;
+                shootCooldown = 1;
             }
 
-            // getPosition().setX(x -> x + velX * speed * delta);
-            // getPosition().setY(y -> y + velY * speed * delta);
         } else {
             velX = 0;
             velY = 0;

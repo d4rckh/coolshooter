@@ -229,6 +229,7 @@ public class Game {
 
         this.userPlayerEntity = new UserPlayerEntity(this);
 
+        this.entitySpawner.spawnNPC();
         this.timerManager.addTimer(
                 new GameTimer(() -> (double)this.gameSettings.getNpcSpawnRate(), true, e -> this.entitySpawner.spawnNPC()));
 

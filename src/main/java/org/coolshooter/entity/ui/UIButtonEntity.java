@@ -86,6 +86,6 @@ public class UIButtonEntity extends RenderableEntity implements Controllable {
 
     @Override
     public void beforeDestroy() {
-        
+
     }
 }

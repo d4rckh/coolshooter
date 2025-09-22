@@ -3,6 +3,8 @@ plugins {
     
     id("application")
     id("edu.sc.seis.launch4j") version "2.5.0"
+
+    id("com.diffplug.spotless") version "7.2.1"
 }
 
 group = "org.example"
@@ -12,6 +14,15 @@ repositories {
     mavenCentral()
     gradlePluginPortal()
 }
+
+spotless {
+    java {
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
 
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

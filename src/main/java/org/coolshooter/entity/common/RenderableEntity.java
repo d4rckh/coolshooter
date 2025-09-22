@@ -13,22 +13,22 @@ import org.coolshooter.entity.trait.Renderable;
 
 public abstract class RenderableEntity extends Entity implements Renderable {
     private final boolean followWorld;
-    
+
     @Getter
     @Setter
     protected Position position;
-    
+
     @Getter
     protected Position screenPosition;
-    
+
     @Getter
     @Setter
     protected Color color = Color.RED;
-    
+
     @Getter
     @Setter
     protected int width = 50;
-    
+
     @Getter
     @Setter
     protected int height = 50;
@@ -65,6 +65,12 @@ public abstract class RenderableEntity extends Entity implements Renderable {
 
     public abstract void renderShape(Graphics g);
 
+
+    public Position getCenter() {
+        return new Position(
+            this.getPosition().getX() + this.getWidth() / 2,
+            this.getPosition().getY() + this.getHeight() / 2);
+    }
 
     public enum ShapeType {RECTANGLE, OVAL}
 }

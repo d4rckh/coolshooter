@@ -38,8 +38,8 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
         if (shoot) {
             if (gun != null && getGame().getPanelMouse() != null) {
                 Position mouseWorld = getGame().getCamera().toWorld(getGame().getPanelMouse());
-                double dx = mouseWorld.getX() - getPosition().getX();
-                double dy = mouseWorld.getY() - getPosition().getY();
+                double dx = mouseWorld.getX() - (getPosition().getX() + this.getWidth() / 2);
+                double dy = mouseWorld.getY() - (getPosition().getY() + this.getWidth() / 2);
 
                 double length = Math.sqrt(dx * dx + dy * dy);
                 if (length != 0) {
@@ -81,10 +81,14 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
         Runnable updateVelocity = () -> {
             velX = 0;
             velY = 0;
-            if (leftPressed[0]) velX -= 1;
-            if (rightPressed[0]) velX += 1;
-            if (upPressed[0]) velY -= 1;
-            if (downPressed[0]) velY += 1;
+            if (leftPressed[0])
+                velX -= 1;
+            if (rightPressed[0])
+                velX += 1;
+            if (upPressed[0])
+                velY -= 1;
+            if (downPressed[0])
+                velY += 1;
 
             // Normalize and expose as dirX/dirY
             double len = Math.sqrt(velX * velX + velY * velY);
@@ -161,24 +165,55 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
     public void renderShape(Graphics g) {
         super.renderShape(g);
 
-        Position mouse = getGame().getPanelMouse();
-        if (mouse != null) {
-            int playerX = (int) getScreenPosition().getX() + getWidth() / 2;
-            int playerY = (int) getScreenPosition().getY() + getHeight() / 2;
+        Position mousePanel = getGame().getPanelMouse();
+        if (mousePanel != null) {
+            // Convert player center to screen coordinates
+            double playerCenterX = getPosition().getX() + getWidth() / 2.0;
+            double playerCenterY = getPosition().getY() + getHeight() / 2.0;
 
-            g.setColor(Color.YELLOW); // aim line color
-            g.drawLine(playerX, playerY, (int) mouse.getX(), (int) mouse.getY());
+            double screenX = getGame().getCamera().toScreenX(playerCenterX);
+            double screenY = getGame().getCamera().toScreenY(playerCenterY);
 
-            // Optional: draw a crosshair at the mouse
+            // Get normalized direction toward mouse in world coordinates
+            Position mouseWorld = getGame().getCamera().toWorld(mousePanel);
+            double dx = mouseWorld.getX() - playerCenterX;
+            double dy = mouseWorld.getY() - playerCenterY;
+            double length = Math.sqrt(dx * dx + dy * dy);
+            if (length > 0) {
+                dx /= length;
+                dy /= length;
+            }
+
+            // Scale line length for visualization
+            double lineLength = 100; // pixels in world units
+            double endX = playerCenterX + dx * lineLength;
+            double endY = playerCenterY + dy * lineLength;
+
+            // Convert end to screen coordinates
+            double screenEndX = getGame().getCamera().toScreenX(endX);
+            double screenEndY = getGame().getCamera().toScreenY(endY);
+
+            // Draw aim line
+            g.setColor(Color.YELLOW);
+            g.drawLine((int) screenX, (int) screenY, (int) screenEndX, (int) screenEndY);
+
+            // Optional: crosshair
             int crossSize = 8;
-            g.drawLine((int) mouse.getX() - crossSize, (int) mouse.getY(),
-                    (int) mouse.getX() + crossSize, (int) mouse.getY());
-            g.drawLine((int) mouse.getX(), (int) mouse.getY() - crossSize,
-                    (int) mouse.getX(), (int) mouse.getY() + crossSize);
+            g.drawLine((int) mousePanel.getX() - crossSize, (int) mousePanel.getY(),
+                    (int) mousePanel.getX() + crossSize, (int) mousePanel.getY());
+            g.drawLine((int) mousePanel.getX(), (int) mousePanel.getY() - crossSize,
+                    (int) mousePanel.getX(), (int) mousePanel.getY() + crossSize);
         }
     }
 
-    /** Get the normalized direction vector (safe for bullet inheritance, AI, etc.) */
-    public double getDirX() { return dirX; }
-    public double getDirY() { return dirY; }
+    /**
+     * Get the normalized direction vector (safe for bullet inheritance, AI, etc.)
+     */
+    public double getDirX() {
+        return dirX;
+    }
+
+    public double getDirY() {
+        return dirY;
+    }
 }

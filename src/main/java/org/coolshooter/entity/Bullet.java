@@ -26,8 +26,11 @@ public class Bullet extends RenderableCollidableEntity {
     private final int damage = 10;
 
     public Bullet(Game game, Color color, Gun gun, Position pos,
-                  double velX, double velY, double extraVelX, double extraVelY) {
-        super(game, pos.getX() + 25 + velX * 25, pos.getY() + 25 + velY * 25);
+            double velX, double velY, double extraVelX, double extraVelY) {
+        super(game,
+                // Start at player center, then offset by half bullet size to align centers
+                pos.getX() + gun.getOwner().getWidth() / 2.0 - 5 + velX * 5,
+                pos.getY() + gun.getOwner().getHeight() / 2.0 - 5 + velY * 5);
 
         this.originGun = gun;
         this.velX = velX * gun.getSpeed();
@@ -36,8 +39,8 @@ public class Bullet extends RenderableCollidableEntity {
         this.extraVelY = extraVelY;
 
         setColor(color);
-        setWidth(10);
-        setHeight(10);
+        setWidth(10); // bullet width
+        setHeight(10); // bullet height
         setShape(ShapeType.OVAL);
     }
 
@@ -65,25 +68,36 @@ public class Bullet extends RenderableCollidableEntity {
     @Override
     public void onCollision(RenderableCollidableEntity entity) {
         // Ignore the owner
-        if (entity == originGun.getOwner()) return;
+        if (entity == originGun.getOwner())
+            return;
 
         // Prevent friendly fire for NPCs
-        if (entity instanceof NPCEntity && originGun.getOwner() instanceof NPCEntity) return;
+        if (entity instanceof NPCEntity && originGun.getOwner() instanceof NPCEntity)
+            return;
 
         // Handle player hit
         if (entity instanceof PlayerEntity player) {
+
+            Point intersectionPoint = entity.getIntersectionPoint(this);
+
+            if (intersectionPoint == null)
+                return;
+
             destroy();
-            
+
             player.takeDamage(this.damage);
             player.knockback(velX, velY, originGun.getKnockbackStrength());
 
             // Add visual hit effect
             getGame().addEntity(new RenderableEffectEntity(
                     getGame(),
-                    new Position(getPosition().getX(), getPosition().getY()),
+                    new Position(
+                        intersectionPoint.getX() - player.getPosition().getX(),
+                        intersectionPoint.getY() - player.getPosition().getY()
+                    ),
                     0.3,
-                    this.getColor()
-            ));
+                    this.getColor(),
+                    player));
 
         }
     }

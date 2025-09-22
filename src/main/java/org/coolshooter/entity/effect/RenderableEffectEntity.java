@@ -7,20 +7,33 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
+import org.coolshooter.entity.common.RenderableCollidableEntity;
 import org.coolshooter.entity.common.RenderableEntity;
 
 public class RenderableEffectEntity extends RenderableEntity {
-    private final double lifetime;      // how long effect lasts (seconds)
-    private double elapsed = 0;         // time passed
+    private final double lifetime; // how long effect lasts (seconds)
+    private double elapsed = 0; // time passed
+
+    private final RenderableCollidableEntity parent;
+    private final Position offset;
+
     @Getter
     @Setter
-
     private Color baseColor = Color.ORANGE;
 
     public RenderableEffectEntity(Game game, Position pos, double lifetime, Color color) {
-        super(game, pos.getX(), pos.getY(), true);
+        this(game, pos, lifetime, color, null);
+    }
+
+    // This makes sure the effect stays fixed to the effect
+    // It is used for hitting indicator
+    public RenderableEffectEntity(Game game, Position offset, double lifetime, Color color,
+            RenderableCollidableEntity parent) {
+        super(game, offset.getX(), offset.getY(), true);
         this.lifetime = lifetime;
         this.baseColor = color;
+        this.offset = offset;
+        this.parent = parent;
     }
 
     @Override
@@ -32,6 +45,14 @@ public class RenderableEffectEntity extends RenderableEntity {
         elapsed += delta;
         if (elapsed >= lifetime) {
             destroy();
+            return;
+        }
+
+        if (parent != null && offset != null) {
+            // Follow parent's center
+            this.setPosition(new Position(
+                    parent.getPosition().getX() + this.offset.getX(),
+                    parent.getPosition().getY() + this.offset.getY()));
         }
     }
 
@@ -55,8 +76,7 @@ public class RenderableEffectEntity extends RenderableEntity {
                 baseColor.getRed(),
                 baseColor.getGreen(),
                 baseColor.getBlue(),
-                alpha
-        );
+                alpha);
 
         g.setColor(fadingColor);
         g.fillOval(x - size / 2, y - size / 2, size, size);
