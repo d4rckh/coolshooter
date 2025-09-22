@@ -13,17 +13,22 @@ import org.coolshooter.entity.trait.Renderable;
 
 public abstract class RenderableEntity extends Entity implements Renderable {
     private final boolean followWorld;
+    
     @Getter
     @Setter
     protected Position position;
+    
     @Getter
     protected Position screenPosition;
+    
     @Getter
     @Setter
     protected Color color = Color.RED;
+    
     @Getter
     @Setter
     protected int width = 50;
+    
     @Getter
     @Setter
     protected int height = 50;

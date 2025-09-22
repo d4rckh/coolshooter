@@ -5,13 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 
-import org.coolshooter.domain.GameState;
+import org.coolshooter.domain.GameScene;
 import org.coolshooter.entity.Entity;
 import org.coolshooter.entity.EntityManager;
 import org.coolshooter.entity.EntitySpawner;
 import org.coolshooter.entity.player.UserPlayerEntity;
 import org.coolshooter.entity.ui.UIButtonEntity;
 import org.coolshooter.entity.ui.UIFpsText;
+import org.coolshooter.entity.ui.UIInputFieldEntity;
+import org.coolshooter.entity.ui.UILabelEntity;
 import org.coolshooter.entity.ui.UIPlayerHealthText;
 import org.coolshooter.timer.GameTimer;
 import org.coolshooter.timer.TimerManager;
@@ -35,11 +37,11 @@ public class Game {
     @Getter
     private final TimerManager timerManager;
 
-    private final int TARGET_FPS = 200;
+    private final int TARGET_FPS = 500;
     private final long OPTIMAL_TIME = 1_000_000_000 / TARGET_FPS; // ns
 
     @Getter
-    private GameState state = GameState.MENU;
+    private GameScene scene = GameScene.MENU;
 
     @Getter
     private UserPlayerEntity userPlayerEntity;
@@ -59,14 +61,99 @@ public class Game {
         frame.setVisible(true);
     }
 
-    public void setState(GameState newState) {
-        this.state = newState;
+    public void setScene(GameScene newState) {
+        this.scene = newState;
 
-        if (newState == GameState.PLAYING) {
+        if (newState == GameScene.PLAYING) {
             startGame();
-        } else if (newState == GameState.MENU) {
+        } else if (newState == GameScene.MENU) {
             showMenu();
+        } else if (newState == GameScene.CUSTOMIZATION) {
+            showCustomization();
         }
+    }
+
+    public void showCustomization() {
+        // Clear old UI/game entities
+        entityManager.clearEntities();
+        timerManager.clearTimers();
+
+        // === Title ===
+        UILabelEntity title = new UILabelEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 - 80, // roughly center text
+                p -> p.getHeight() / 2.0 - 160), "Customization");
+        entityManager.addEntity(title);
+
+        // === NPC Spawn Interval ===
+        UILabelEntity npcSpawnLabel = new UILabelEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 - 180,
+                p -> p.getHeight() / 2.0 - 100), "NPC Spawn Interval (s):");
+        entityManager.addEntity(npcSpawnLabel);
+
+        UIInputFieldEntity npcSpawnField = new UIInputFieldEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 + 20,
+                p -> p.getHeight() / 2.0 - 100), 100);
+        // npcSpawnField.setText("5");
+        entityManager.addEntity(npcSpawnField);
+
+        // === Knockback Strength ===
+        UILabelEntity knockbackLabel = new UILabelEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 - 180,
+                p -> p.getHeight() / 2.0 - 40), "Knockback Strength:");
+        entityManager.addEntity(knockbackLabel);
+
+        UIInputFieldEntity knockbackField = new UIInputFieldEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 + 20,
+                p -> p.getHeight() / 2.0 - 40), 100);
+        // knockbackField.setText("5.0");
+        entityManager.addEntity(knockbackField);
+
+        // === Gun Cooldown ===
+        UILabelEntity cooldownLabel = new UILabelEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 - 180,
+                p -> p.getHeight() / 2.0 + 20), "Gun Cooldown (ms):");
+        entityManager.addEntity(cooldownLabel);
+
+        UIInputFieldEntity cooldownField = new UIInputFieldEntity(this, new DynamicPosition(
+                panel,
+                p -> p.getWidth() / 2.0 + 20,
+                p -> p.getHeight() / 2.0 + 20), 100);
+        // cooldownField.setText("300");
+        entityManager.addEntity(cooldownField);
+
+        // === Apply Button ===
+        UIButtonEntity applyButton = new UIButtonEntity(
+                this,
+                new DynamicPosition(
+                        panel,
+                        p -> p.getWidth() / 2.0 - 60, // button width 120 -> center
+                        p -> p.getHeight() / 2.0 + 80),
+                "Apply",
+                () -> {
+                    try {
+                        int npcInterval = Integer.parseInt(npcSpawnField.getText());
+                        double knockback = Double.parseDouble(knockbackField.getText());
+                        int cooldown = Integer.parseInt(cooldownField.getText());
+
+                        // this.getSettings().setNpcSpawnInterval(npcInterval);
+                        // game.getSettings().setKnockbackStrength(knockback);
+                        // game.getSettings().setGunCooldown(cooldown);
+
+                        log.info("Customization applied: NPC interval=" + npcInterval +
+                                "s, Knockback=" + knockback + ", Cooldown=" + cooldown + "ms");
+
+                        this.setScene(GameScene.MENU);
+                    } catch (NumberFormatException e) {
+                        log.warn("Invalid customization input", e);
+                    }
+                });
+        entityManager.addEntity(applyButton);
     }
 
     /** Returns mouse position in panel coordinates */
@@ -107,10 +194,20 @@ public class Game {
                 new DynamicPosition(
                         panel,
                         p -> p.getWidth() / 2.0 - 100, // X: centered minus half button width
+                        p -> p.getHeight() / 2.0 - 100 // Y: centered minus half button height
+                ),
+                "Play",
+                () -> setScene(GameScene.PLAYING)));
+
+        entityManager.addEntity(new UIButtonEntity(
+                this,
+                new DynamicPosition(
+                        panel,
+                        p -> p.getWidth() / 2.0 - 100, // X: centered minus half button width
                         p -> p.getHeight() / 2.0 - 25 // Y: centered minus half button height
                 ),
-                "Start Game",
-                () -> setState(GameState.PLAYING)));
+                "Customize",
+                () -> setScene(GameScene.CUSTOMIZATION)));
 
         entityManager.addEntity(new UIButtonEntity(
                 this,
@@ -168,7 +265,7 @@ public class Game {
         entityManager.update(delta);
         entityManager.handleCollisions();
 
-        if (state == GameState.PLAYING && userPlayerEntity != null) {
+        if (scene == GameScene.PLAYING && userPlayerEntity != null) {
             camera.centerOn(userPlayerEntity.getPosition(), panel.getWidth(), panel.getHeight());
         }
 

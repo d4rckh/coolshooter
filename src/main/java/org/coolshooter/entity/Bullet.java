@@ -16,6 +16,8 @@ import org.coolshooter.entity.player.PlayerEntity;
 public class Bullet extends RenderableCollidableEntity {
     private double velX;
     private double velY;
+    private double extraVelX;
+    private double extraVelY;
     @Getter
     private final Gun originGun;
     private double travelledX;
@@ -23,7 +25,8 @@ public class Bullet extends RenderableCollidableEntity {
     @Getter
     private final int damage = 10;
 
-    public Bullet(Game game, Color color, Gun gun, Position playerPos, double velX, double velY) {
+    public Bullet(Game game, Color color, Gun gun, Position playerPos,
+                  double velX, double velY, double extraVelX, double extraVelY) {
         super(game,
                 playerPos.getX() + 25 + velX * 25,
                 playerPos.getY() + 25 + velY * 25);
@@ -31,6 +34,8 @@ public class Bullet extends RenderableCollidableEntity {
         this.originGun = gun;
         this.velX = velX;
         this.velY = velY;
+        this.extraVelX = extraVelX;
+        this.extraVelY = extraVelY;
 
         // Use RenderableEntity customization
         setColor(color);
@@ -46,33 +51,35 @@ public class Bullet extends RenderableCollidableEntity {
 
     @Override
     public void update(double delta) {
-        // Apply damping to velocity
-        double damping = 0.98; // Reduce speed by 2% per frame
-        double speedX = velX * originGun.getSpeed();
-        double speedY = velY * originGun.getSpeed();
+        // Apply damping to base velocity only (optional)
+        double damping = 0.98; 
+        double speedX = velX * originGun.getSpeed() + extraVelX;
+        double speedY = velY * originGun.getSpeed() + extraVelY;
 
-        // Update position with current speed
+        // Update position
         getPosition().setX(x -> x + speedX * delta);
         getPosition().setY(y -> y + speedY * delta);
 
         travelledX += speedX * delta;
         travelledY += speedY * delta;
 
-        // Reduce the velocity for next frame
+        // Reduce base velocity for next frame
         velX *= damping;
         velY *= damping;
 
+        // Optionally, extraVel can stay constant or decay (here it stays constant)
+        // extraVelX *= damping;
+        // extraVelY *= damping;
+
         // Destroy bullet if travelled far enough
         if (Math.sqrt(travelledX * travelledX + travelledY * travelledY) >= originGun.getMaxDistance() ||
-            (Math.abs(velX) <= 0.05 && Math.abs(velY) <= 0.05)) {
+            (Math.abs(speedX) <= 0.05 && Math.abs(speedY) <= 0.05)) {
             destroy();
         }
     }
 
     @Override
     public void onCollision(RenderableCollidableEntity entity) {
-        // Only collide with players (and not the shooter)
-
         if (entity == originGun.getOwner())
             return;
 
@@ -81,16 +88,16 @@ public class Bullet extends RenderableCollidableEntity {
 
         if (entity instanceof PlayerEntity player) {
             player.takeDamage(this.damage);
-            player.knockback(velX, velY, this.originGun.getKnockbackStrength());
+            player.knockback(velX + extraVelX, velY + extraVelY, this.originGun.getKnockbackStrength());
+
             // Add hit effect
             getGame().addEntity(new RenderableEffectEntity(
                     getGame(),
                     new Position(getPosition().getX(), getPosition().getY()),
-                    0.3, // lifetime in seconds
+                    0.3,
                     this.getColor()));
 
             this.destroy();
         }
     }
-
 }

@@ -41,7 +41,17 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
                     dx /= length;
                     dy /= length;
                 }
-                gun.shoot(dx, dy);
+
+                // Add player velocity in the same direction
+                double playerVelX = velX * getSpeed();
+                double playerVelY = velY * getSpeed();
+
+                // Scale player's velocity along the shooting direction
+                double dot = dx * playerVelX + dy * playerVelY;
+                double addedSpeedX = dx * dot / Math.sqrt(dx * dx + dy * dy);
+                double addedSpeedY = dy * dot / Math.sqrt(dx * dx + dy * dy);
+
+                gun.shoot(dx, dy, addedSpeedX, addedSpeedY); // <-- Pass extra velocity
             }
             shoot = false;
         }
@@ -67,10 +77,10 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
         });
 
         // Movement flags
-        final boolean[] upPressed = {false};
-        final boolean[] downPressed = {false};
-        final boolean[] leftPressed = {false};
-        final boolean[] rightPressed = {false};
+        final boolean[] upPressed = { false };
+        final boolean[] downPressed = { false };
+        final boolean[] leftPressed = { false };
+        final boolean[] rightPressed = { false };
 
         // Update velocity based on flags
         Runnable updateVelocity = () -> {

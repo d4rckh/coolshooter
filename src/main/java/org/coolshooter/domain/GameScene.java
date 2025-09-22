@@ -1,6 +1,7 @@
 package org.coolshooter.domain;
 
-public enum GameState {
+public enum GameScene {
     MENU,
+    CUSTOMIZATION,
     PLAYING
 }

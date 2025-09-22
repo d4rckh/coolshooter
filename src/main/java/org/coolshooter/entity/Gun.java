@@ -16,7 +16,7 @@ public class Gun {
     private double timeSinceLastShot = 0;
 
     @Getter
-    private final int speed = 1000; // pixels/sec
+    private final int speed = 2000; // pixels/sec
 
     @Getter
     private final double knockbackStrength = 700;
@@ -38,11 +38,24 @@ public class Gun {
         }
     }
 
-    public void shoot(double dx, double dy) {
+    public void shoot(double dirX, double dirY, double extraVelX, double extraVelY) {
         if (timeSinceLastShot >= cooldown) {
-            // create a bullet at the player's world position
-            Bullet bullet = new Bullet(this.game, bulletColor, this, owner.getPosition(), dx, dy);
+            // Create a bullet at the owner's position
+            Bullet bullet = new Bullet(
+                    this.game,
+                    bulletColor,
+                    this,
+                    owner.getPosition(),
+                    dirX, // base direction X
+                    dirY, // base direction Y
+                    extraVelX, // extra velocity X (e.g., player movement)
+                    extraVelY // extra velocity Y
+            );
+
+            // Add bullet to the game
             owner.getGame().addEntity(bullet);
+
+            // Reset shooting cooldown
             timeSinceLastShot = 0;
         }
     }

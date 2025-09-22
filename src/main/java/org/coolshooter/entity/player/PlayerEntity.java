@@ -6,12 +6,12 @@ import lombok.Setter;
 import java.awt.*;
 
 import org.coolshooter.Game;
-import org.coolshooter.domain.GameState;
+import org.coolshooter.domain.GameScene;
 import org.coolshooter.entity.Gun;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
 
 public abstract class PlayerEntity extends RenderableCollidableEntity {
-    @Setter
+    @Setter @Getter
     protected int speed = 500;
     protected double velX = 0;
     protected double velY = 0;
@@ -74,7 +74,7 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
             this.destroy();
 
             if (this instanceof UserPlayerEntity) {
-                this.getGame().setState(GameState.MENU);
+                this.getGame().setScene(GameScene.MENU);
             }
         }
     }
@@ -87,11 +87,13 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
     public void render(Graphics g) {
         super.render(g); // draw the player
 
-        // Draw health bar
-        int barWidth = getWidth();
-        int barHeight = 5;
+        // Health bar dimensions
+        int barWidth = (int)(getWidth() * getGame().getCamera().getZoom());
+        int barHeight = (int)(7 * getGame().getCamera().getZoom());
+
+        // Position above the player's sprite
         int x = (int) getScreenPosition().getX();
-        int y = (int) getScreenPosition().getY() - barHeight - 2; // slightly above player
+        int y = (int) (getScreenPosition().getY() - 15);
 
         // Background (grey)
         g.setColor(Color.GRAY);
@@ -99,7 +101,7 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
 
         // Foreground (green -> red depending on hp)
         float healthRatio = Math.max(0, (float) this.getHp() / this.getMaxHp());
-        g.setColor(new Color(1 - healthRatio, healthRatio, 0)); // green to red
+        g.setColor(new Color(1 - healthRatio, healthRatio, 0)); // red to green
         g.fillRect(x, y, (int) (barWidth * healthRatio), barHeight);
 
         // Optional border
