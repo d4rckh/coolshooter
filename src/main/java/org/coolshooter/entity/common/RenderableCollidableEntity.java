@@ -10,7 +10,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 import org.coolshooter.Game;
-import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.trait.Collidable;
 
 @Slf4j
@@ -27,10 +26,12 @@ public abstract class RenderableCollidableEntity extends RenderableEntity implem
      * Returns a shape for collision calculations (world coordinates)
      */
     public Shape getCollisionShape() {
-        double x = position.getX();
-        double y = position.getY();
-        double w = width;
-        double h = height;
+        double w = width * scale;
+        double h = height * scale;
+
+        // recenter collision shape
+        double x = position.getX() + (width - w) / 2;
+        double y = position.getY() + (height - h) / 2;
 
         return switch (shape) {
             case RECTANGLE -> new Rectangle2D.Double(x, y, w, h);
@@ -38,11 +39,13 @@ public abstract class RenderableCollidableEntity extends RenderableEntity implem
         };
     }
 
+    @Override
     public boolean collidesWith(RenderableCollidableEntity other) {
         return this.getCollisionShape().getBounds2D()
                 .intersects(other.getCollisionShape().getBounds2D());
     }
 
+    @Override
     public Point getIntersectionPoint(RenderableCollidableEntity other) {
         Shape thisShape = this.getCollisionShape();
         Shape otherShape = other.getCollisionShape();
@@ -67,14 +70,20 @@ public abstract class RenderableCollidableEntity extends RenderableEntity implem
     @Override
     public void renderShape(Graphics g) {
         g.setColor(color);
-        int x = (int) screenPosition.getX();
-        int y = (int) screenPosition.getY();
-        int w = (int) (width * getGame().getCamera().getZoom());
-        int h = (int) (height * getGame().getCamera().getZoom());
+
+        int baseW = (int) (width * getGame().getCamera().getZoom());
+        int baseH = (int) (height * getGame().getCamera().getZoom());
+
+        int scaledW = (int) (baseW * scale);
+        int scaledH = (int) (baseH * scale);
+
+        // recenter on screen
+        int x = (int) (screenPosition.getX() + baseW / 2 - scaledW / 2);
+        int y = (int) (screenPosition.getY() + baseH / 2 - scaledH / 2);
 
         switch (shape) {
-            case RECTANGLE -> g.fillRect(x, y, w, h);
-            case OVAL -> g.fillOval(x, y, w, h);
+            case RECTANGLE -> g.fillRect(x, y, scaledW, scaledH);
+            case OVAL -> g.fillOval(x, y, scaledW, scaledH);
         }
     }
 

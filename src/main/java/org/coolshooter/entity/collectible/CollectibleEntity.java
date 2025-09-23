@@ -14,10 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class CollectibleEntity extends RenderableCollidableEntity {
     private final String displayName;
+    private double animationTime;
 
     public CollectibleEntity(Game game, double worldX, double worldY, String displayName) {
         super(game, worldX, worldY);
         this.displayName = displayName;
+        this.animationTime = 0;
     }
 
     @Override
@@ -26,6 +28,10 @@ public abstract class CollectibleEntity extends RenderableCollidableEntity {
 
     @Override
     public void update(double delta) {
+        this.animationTime += delta;
+
+        this.setHeight((int) (30 * (1 + Math.abs(Math.sin(this.animationTime * 2)))));
+        this.setWidth((int) (30 * (1 + Math.abs(Math.sin(this.animationTime * 2)))));
     }
 
     @Override
@@ -42,7 +48,7 @@ public abstract class CollectibleEntity extends RenderableCollidableEntity {
 
         Graphics2D g2 = (Graphics2D) g.create();
 
-        g2.setFont(new Font("Arial", Font.BOLD, (int)(30 * this.getGame().getCamera().getZoom())));
+        g2.setFont(new Font("Arial", Font.BOLD, (int) (30 * this.getGame().getCamera().getZoom())));
 
         // Center the text above the entity
         int textWidth = g2.getFontMetrics().stringWidth(displayName);
