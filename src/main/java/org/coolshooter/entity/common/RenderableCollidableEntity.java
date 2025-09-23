@@ -10,7 +10,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 import org.coolshooter.Game;
-import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.trait.Collidable;
 
 @Slf4j
