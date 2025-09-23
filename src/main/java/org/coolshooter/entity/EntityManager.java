@@ -2,7 +2,7 @@ package org.coolshooter.entity;
 
 import javax.swing.*;
 
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.trait.Collidable;
 import org.coolshooter.entity.trait.Controllable;
 
@@ -57,16 +57,16 @@ public class EntityManager {
 
     /** Handle collisions between collidable entities */
     public void handleCollisions() {
-        List<RenderableCollidableEntity> collidables = entities.stream()
-                .filter(e -> e instanceof Collidable && e instanceof RenderableCollidableEntity)
+        List<Collidable> collidables = entities.stream()
+                .filter(e -> e instanceof Collidable && e instanceof Collidable)
                 .filter(e -> !e.isDestroyed())
-                .map(e -> (RenderableCollidableEntity) e)
+                .map(e -> (Collidable) e)
                 .collect(Collectors.toList());
 
         for (int i = 0; i < collidables.size(); i++) {
-            RenderableCollidableEntity a = collidables.get(i);
+            Collidable a = collidables.get(i);
             for (int j = i + 1; j < collidables.size(); j++) {
-                RenderableCollidableEntity b = collidables.get(j);
+                Collidable b = collidables.get(j);
                 if (a.collidesWith(b)) {
                     a.onCollision(b);
                     b.onCollision(a);

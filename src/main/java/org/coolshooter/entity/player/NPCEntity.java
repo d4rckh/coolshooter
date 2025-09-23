@@ -4,17 +4,17 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.RenderableEntity;
 import org.coolshooter.entity.gun.WeakGun;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class NPCEntity extends PlayerEntity {
-    private final RenderableCollidableEntity entityToFollow;
+    private final RenderableEntity entityToFollow;
     private double shootCooldown = 1;
 
-    public NPCEntity(Game game, Position position, RenderableCollidableEntity entityToFollow) {
+    public NPCEntity(Game game, Position position, RenderableEntity entityToFollow) {
         super(game, position.getX(), position.getY());
         this.entityToFollow = entityToFollow;
         setColor(Color.RED);
@@ -22,7 +22,6 @@ public class NPCEntity extends PlayerEntity {
         setHeight(90);
         setHp(50);
         setMaxHp(50);
-        setShape(ShapeType.OVAL);
         setSpeed(500);
     }
 

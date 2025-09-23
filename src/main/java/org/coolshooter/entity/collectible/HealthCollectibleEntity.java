@@ -3,8 +3,8 @@ package org.coolshooter.entity.collectible;
 import java.awt.Color;
 
 import org.coolshooter.Game;
-import org.coolshooter.entity.common.RenderableCollidableEntity;
 import org.coolshooter.entity.player.UserPlayerEntity;
+import org.coolshooter.entity.trait.Collidable;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +20,7 @@ public class HealthCollectibleEntity extends CollectibleEntity {
     }
 
     @Override
-    public void onCollision(RenderableCollidableEntity entity) {
+    public void onCollision(Collidable entity) {
         if (entity instanceof UserPlayerEntity player) {
             if (player.heal(5))
                 this.destroy();

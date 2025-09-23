@@ -7,14 +7,15 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.effect.RenderableEffectEntity;
 import org.coolshooter.entity.gun.Gun;
 import org.coolshooter.entity.player.NPCEntity;
 import org.coolshooter.entity.player.PlayerEntity;
+import org.coolshooter.entity.trait.Collidable;
 
 @Slf4j
-public class Bullet extends RenderableCollidableEntity {
+public class Bullet extends BasicShapeCollidableEntity {
     private final double velX;
     private final double velY;
     private final double extraVelX;
@@ -70,7 +71,7 @@ public class Bullet extends RenderableCollidableEntity {
     }
 
     @Override
-    public void onCollision(RenderableCollidableEntity entity) {
+    public void onCollision(Collidable entity) {
         // Ignore the owner
         if (entity == originGun.getOwner())
             return;

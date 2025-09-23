@@ -1,13 +1,16 @@
 package org.coolshooter.entity.trait;
 
 import java.awt.Point;
+import java.awt.Shape;
 
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 
 public interface Collidable {
-    void onCollision(RenderableCollidableEntity entity);
+    void onCollision(Collidable entity);
 
-    boolean collidesWith(RenderableCollidableEntity other);
+    boolean collidesWith(Collidable other);
 
-    Point getIntersectionPoint(RenderableCollidableEntity other);
+    Shape getCollisionShape();
+
+    Point getIntersectionPoint(Collidable other);
 }

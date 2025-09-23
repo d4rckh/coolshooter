@@ -49,6 +49,9 @@ public class Game {
     @Getter
     private final GameSettings gameSettings;
 
+    @Getter
+    private final ResourceManager resourceManager;
+
     public Game(JFrame frame) {
         this.panel = new GamePanel(this);
         this.camera = new Camera(0, 0);
@@ -56,6 +59,7 @@ public class Game {
         this.entitySpawner = new EntitySpawner(this);
         this.timerManager = new TimerManager();
         this.gameSettings = new GameSettings();
+        this.resourceManager = new ResourceManager();
 
         panel.setBackground(Color.BLACK);
 
@@ -167,6 +171,9 @@ public class Game {
 
     /** Initialize the game */
     void init() {
+        // load resources
+        resourceManager.init();
+        
         camera.adjustZoom(panel.getWidth(), panel.getHeight(), 1000, 1000);
 
         panel.addComponentListener(new java.awt.event.ComponentAdapter() {

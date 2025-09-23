@@ -6,14 +6,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import org.coolshooter.Game;
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.player.UserPlayerEntity;
-import org.coolshooter.Position;
+import org.coolshooter.entity.trait.Collectible;
+import org.coolshooter.entity.trait.Collidable;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class CollectibleEntity extends RenderableCollidableEntity {
+public abstract class CollectibleEntity extends BasicShapeCollidableEntity implements Collectible {
     private final String displayName;
     private double animationTime;
 
@@ -50,13 +51,13 @@ public abstract class CollectibleEntity extends RenderableCollidableEntity {
 
         this.getPosition().setX(newX);
         this.getPosition().setY(newY);
-        
+
         this.setWidth((int) newSize);
         this.setHeight((int) newSize);
     }
 
     @Override
-    public void onCollision(RenderableCollidableEntity entity) {
+    public void onCollision(Collidable entity) {
         if (entity instanceof UserPlayerEntity player) {
             if (player.heal(5))
                 this.destroy();
@@ -69,12 +70,16 @@ public abstract class CollectibleEntity extends RenderableCollidableEntity {
 
         Graphics2D g2 = (Graphics2D) g.create();
 
-        g2.setFont(new Font("Arial", Font.BOLD, (int) (30 * this.getGame().getCamera().getZoom())));
+        double zoom = this.getGame().getCamera().getZoom();
+        g2.setFont(new Font("Arial", Font.BOLD, (int) (30 * zoom)));
 
-        // Center the text above the entity
+        // Get screen coordinates of the anchor
+        int screenX = (int) getGame().getCamera().toScreenX(anchorX);
+        int screenY = (int) getGame().getCamera().toScreenY(anchorY);
+
         int textWidth = g2.getFontMetrics().stringWidth(displayName);
-        int textX = (int) (getScreenPosition().getX() + getWidth() / 2.0 - textWidth / 2);
-        int textY = (int) (getScreenPosition().getY() - 2);
+        int textX = screenX - textWidth / 2;
+        int textY = screenY - (int) (this.getHeight() / 2 * zoom) - 5; // a bit above
 
         g2.setColor(Color.WHITE);
         g2.drawString(displayName, textX, textY);

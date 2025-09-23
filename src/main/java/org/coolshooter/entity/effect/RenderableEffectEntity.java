@@ -7,14 +7,14 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.common.RenderableEntity;
 
 public class RenderableEffectEntity extends RenderableEntity {
     private final double lifetime; // how long effect lasts (seconds)
     private double elapsed = 0; // time passed
 
-    private final RenderableCollidableEntity followEntity;
+    private final RenderableEntity followEntity;
     private final Position offset;
 
     @Getter
@@ -28,7 +28,7 @@ public class RenderableEffectEntity extends RenderableEntity {
     // This makes sure the effect stays fixed to the effect
     // It is used for hitting indicator
     public RenderableEffectEntity(Game game, Position offset, double lifetime, Color color,
-            RenderableCollidableEntity parent) {
+            RenderableEntity parent) {
         super(game, offset.getX(), offset.getY(), true);
         this.lifetime = lifetime;
         this.baseColor = color;

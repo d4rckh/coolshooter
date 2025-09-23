@@ -13,12 +13,12 @@ import org.coolshooter.Game;
 import org.coolshooter.entity.trait.Collidable;
 
 @Slf4j
-public abstract class RenderableCollidableEntity extends RenderableEntity implements Collidable {
+public abstract class BasicShapeCollidableEntity extends RenderableEntity implements Collidable {
     @Getter
     @Setter
     protected ShapeType shape = ShapeType.RECTANGLE;
 
-    public RenderableCollidableEntity(Game game, double worldX, double worldY) {
+    public BasicShapeCollidableEntity(Game game, double worldX, double worldY) {
         super(game, worldX, worldY, true);
     }
 
@@ -40,13 +40,13 @@ public abstract class RenderableCollidableEntity extends RenderableEntity implem
     }
 
     @Override
-    public boolean collidesWith(RenderableCollidableEntity other) {
+    public boolean collidesWith(Collidable other) {
         return this.getCollisionShape().getBounds2D()
                 .intersects(other.getCollisionShape().getBounds2D());
     }
 
     @Override
-    public Point getIntersectionPoint(RenderableCollidableEntity other) {
+    public Point getIntersectionPoint(Collidable other) {
         Shape thisShape = this.getCollisionShape();
         Shape otherShape = other.getCollisionShape();
 
@@ -87,6 +87,6 @@ public abstract class RenderableCollidableEntity extends RenderableEntity implem
         }
     }
 
-    public void onCollision(RenderableCollidableEntity entity) {
+    public void onCollision(BasicShapeCollidableEntity entity) {
     }
 }

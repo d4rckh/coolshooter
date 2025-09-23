@@ -8,12 +8,13 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.domain.GameScene;
-import org.coolshooter.entity.common.RenderableCollidableEntity;
+import org.coolshooter.entity.common.BasicShapeCollidableEntity;
+import org.coolshooter.entity.common.SpriteCollidableEntity;
 import org.coolshooter.entity.gun.Gun;
 
 @Slf4j
 @Getter
-public abstract class PlayerEntity extends RenderableCollidableEntity {
+public abstract class PlayerEntity extends SpriteCollidableEntity {
     @Setter
     protected int speed = 600;
     protected double velX = 0;
@@ -27,7 +28,7 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
     private double knockbackVY = 0;
 
     public PlayerEntity(Game game, double worldX, double worldY) {
-        super(game, worldX, worldY);
+        super(game, worldX, worldY, "player");
     }
 
     @Override
@@ -39,11 +40,19 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
         this.knockbackVY = vy * strength;
     }
 
+    /**
+     * This function returns true if the user has received the heal, otherwise, in
+     * case the player entity has their health maxed out, it will return false and
+     * the hp won't be added
+     * 
+     * @param hp amount of health to add
+     * @return wether the heal was executed
+     */
     public boolean heal(int hp) {
-        if (this.getHp() + hp > this.getMaxHp())
+        if (this.getHp() == this.getMaxHp())
             return false;
 
-        this.setHp(this.getHp() + hp);
+        this.setHp(Math.min(this.getHp() + hp, this.getMaxHp()));
         return true;
     }
 
@@ -65,6 +74,12 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
 
         getPosition().setX(getPosition().getX() + dx);
         getPosition().setY(getPosition().getY() + dy);
+
+        if (velX < 0) {
+            this.setFlipHorizontally(true);
+        } else if (velX > 0) {
+            this.setFlipHorizontally(false);
+        }
 
         // Decay knockback (friction)
         double decay = 5.0; // higher = stops faster
@@ -88,7 +103,7 @@ public abstract class PlayerEntity extends RenderableCollidableEntity {
     }
 
     @Override
-    public void onCollision(RenderableCollidableEntity entity) {
+    public void onCollision(BasicShapeCollidableEntity entity) {
     }
 
     @Override

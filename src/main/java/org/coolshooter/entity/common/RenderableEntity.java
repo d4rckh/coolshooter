@@ -37,6 +37,13 @@ public abstract class RenderableEntity extends Entity implements Renderable {
     @Setter
     protected double scale = 1.0;
 
+    /**
+     * Used for UI elements that need their position to update based on JPanel
+     * height and width
+     * 
+     * @param game the game instance
+     * @param position the dynamic position class
+     */
     public RenderableEntity(Game game, DynamicPosition position) {
         super(game);
         this.followWorld = false;
