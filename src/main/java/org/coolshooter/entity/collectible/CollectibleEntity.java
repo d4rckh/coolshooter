@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import org.coolshooter.Game;
 import org.coolshooter.entity.common.RenderableCollidableEntity;
 import org.coolshooter.entity.player.UserPlayerEntity;
+import org.coolshooter.Position;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,22 +17,42 @@ public abstract class CollectibleEntity extends RenderableCollidableEntity {
     private final String displayName;
     private double animationTime;
 
+    private double anchorX;
+    private double anchorY;
+
     public CollectibleEntity(Game game, double worldX, double worldY, String displayName) {
         super(game, worldX, worldY);
         this.displayName = displayName;
         this.animationTime = 0;
+
+        this.anchorX = worldX + width / 2.0;
+        this.anchorY = worldY + height / 2.0;
     }
 
     @Override
     public void init() {
     }
 
+    private int baseSize = 30;
+    private int amplitude = 5;
+
     @Override
     public void update(double delta) {
         this.animationTime += delta;
 
-        this.setHeight((int) (30 * (1 + Math.abs(Math.sin(this.animationTime * 2)))));
-        this.setWidth((int) (30 * (1 + Math.abs(Math.sin(this.animationTime * 2)))));
+        // Oscillating size
+        double scale = Math.sin(this.animationTime * 2); // -1 to 1
+        double newSize = baseSize + scale * amplitude;
+
+        // Position so element stays centered on the original anchor
+        int newX = (int) (anchorX - newSize / 2);
+        int newY = (int) (anchorY - newSize / 2);
+
+        this.getPosition().setX(newX);
+        this.getPosition().setY(newY);
+        
+        this.setWidth((int) newSize);
+        this.setHeight((int) newSize);
     }
 
     @Override

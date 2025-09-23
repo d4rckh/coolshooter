@@ -50,9 +50,8 @@ public class RenderableEffectEntity extends RenderableEntity {
 
         if (followEntity != null && offset != null) {
             // Follow parent's center
-            this.setPosition(new Position(
-                    followEntity.getPosition().getX() + this.offset.getX(),
-                    followEntity.getPosition().getY() + this.offset.getY()));
+            this.getPosition().setX(followEntity.getPosition().getX() + this.offset.getX());
+            this.getPosition().setY(followEntity.getPosition().getY() + this.offset.getY());
         }
     }
 

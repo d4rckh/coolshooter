@@ -23,6 +23,13 @@ public class Camera {
         int y = (int) ((worldPos.getY() - offsetY) * zoom);
         return new Position(x, y);
     }
+    
+    public void toScreen(Position worldPos, Position screenPos) {
+        int x = (int) ((worldPos.getX() - offsetX) * zoom);
+        int y = (int) ((worldPos.getY() - offsetY) * zoom);
+        screenPos.setX(x);
+        screenPos.setY(y);
+    }
 
     /**
      * Convert world position to screen coordinates

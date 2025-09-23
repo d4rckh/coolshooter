@@ -55,7 +55,7 @@ public abstract class RenderableEntity extends Entity implements Renderable {
      * Update screen position from camera
      */
     public void updateScreenPosition() {
-        screenPosition = getGame().getCamera().toScreen(position);
+        getGame().getCamera().toScreen(position, screenPosition);
     }
 
     /**

@@ -18,8 +18,8 @@ public class NPCEntity extends PlayerEntity {
         super(game, position.getX(), position.getY());
         this.entityToFollow = entityToFollow;
         setColor(Color.RED);
-        setWidth(50);
-        setHeight(50);
+        setWidth(90);
+        setHeight(90);
         setHp(50);
         setMaxHp(50);
         setShape(ShapeType.OVAL);
