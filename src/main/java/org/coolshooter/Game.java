@@ -9,7 +9,6 @@ import org.coolshooter.domain.GameScene;
 import org.coolshooter.entity.Entity;
 import org.coolshooter.entity.EntityManager;
 import org.coolshooter.entity.EntitySpawner;
-import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.player.UserPlayerEntity;
 import org.coolshooter.entity.ui.UIButtonEntity;
 import org.coolshooter.entity.ui.UIFpsText;

@@ -33,6 +33,10 @@ public abstract class RenderableEntity extends Entity implements Renderable {
     @Setter
     protected int height = 50;
 
+    @Getter
+    @Setter
+    protected double scale = 1.0;
+
     public RenderableEntity(Game game, DynamicPosition position) {
         super(game);
         this.followWorld = false;
@@ -58,19 +62,21 @@ public abstract class RenderableEntity extends Entity implements Renderable {
      * Render rectangle/oval entities
      */
     public void render(Graphics g) {
-        if (followWorld) updateScreenPosition(); // keep screen position updated
+        if (followWorld)
+            updateScreenPosition(); // keep screen position updated
 
         renderShape(g);
     }
 
     public abstract void renderShape(Graphics g);
 
-
     public Position getCenter() {
         return new Position(
-            this.getPosition().getX() + this.getWidth() / 2,
-            this.getPosition().getY() + this.getHeight() / 2);
+                this.getPosition().getX() + this.getWidth() / 2,
+                this.getPosition().getY() + this.getHeight() / 2);
     }
 
-    public enum ShapeType {RECTANGLE, OVAL}
+    public enum ShapeType {
+        RECTANGLE, OVAL
+    }
 }
