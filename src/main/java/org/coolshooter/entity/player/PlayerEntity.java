@@ -10,6 +10,7 @@ import org.coolshooter.Game;
 import org.coolshooter.domain.GameScene;
 import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.common.SpriteCollidableEntity;
+import org.coolshooter.entity.effect.RenderableEffectEntity;
 import org.coolshooter.entity.gun.Gun;
 
 @Slf4j
@@ -91,15 +92,35 @@ public abstract class PlayerEntity extends SpriteCollidableEntity {
             gun.update(delta);
     }
 
-    public void takeDamage(int damage) {
+    /**
+     * Takes damage, destroys if the player ran out of health
+     * 
+     * @param damage the health points to substract
+     * @return returns wether the entity has been destroyed or not due to not having
+     *         enough health
+     */
+    public boolean takeDamage(int damage) {
         this.hp -= damage;
         if (hp <= 0) {
+
+            getGame().addEntity(new RenderableEffectEntity(
+                    getGame(),
+                    // Offset stored as position
+                    // TODO: store as something else
+                    this.getCenter(),
+                    0.3,
+                    this.getColor()));
+
             this.destroy();
 
             if (this instanceof UserPlayerEntity) {
                 this.getGame().setScene(GameScene.MENU);
             }
+
+            return true;
         }
+
+        return false;
     }
 
     @Override

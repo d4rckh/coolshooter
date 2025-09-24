@@ -20,9 +20,9 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
     public UserPlayerEntity(Game game) {
         super(game, 500, 500, "player");
         setColor(Color.blue);
-        setWidth(50);
+        setWidth(70);
         setSpeed(400);
-        setHeight(50);
+        setHeight(70);
     }
 
     @Override

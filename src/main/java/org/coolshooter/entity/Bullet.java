@@ -28,7 +28,6 @@ public class Bullet extends BasicShapeCollidableEntity {
 
     private static int width = 10;
     private static int height = 10;
-    
 
     public Bullet(Game game, Color color, Gun gun, Position pos,
             double velX, double velY, double extraVelX, double extraVelY) {
@@ -90,20 +89,23 @@ public class Bullet extends BasicShapeCollidableEntity {
 
             destroy();
 
-            player.takeDamage(this.damage);
-            player.knockback(velX, velY, originGun.getKnockbackStrength());
+            if (player.takeDamage(this.damage)) {
+                // if the player has not been killed, only the kill animation will be played
+            } else {
+                player.knockback(velX, velY, originGun.getKnockbackStrength());
 
-            // Add visual hit effect
-            getGame().addEntity(new RenderableEffectEntity(
-                    getGame(),
-                    // Offset stored as position
-                    // TODO: store as something else
-                    new Position(
-                            intersectionPoint.getX() - player.getPosition().getX(),
-                            intersectionPoint.getY() - player.getPosition().getY()),
-                    0.3,
-                    this.getColor(),
-                    player));
+                // Add visual hit effect
+                getGame().addEntity(new RenderableEffectEntity(
+                        getGame(),
+                        // Offset stored as position
+                        // TODO: store as something else
+                        new Position(
+                                intersectionPoint.getX() - player.getPosition().getX(),
+                                intersectionPoint.getY() - player.getPosition().getY()),
+                        0.3,
+                        this.getColor(),
+                        player));
+            }
 
         }
     }

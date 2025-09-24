@@ -2,7 +2,6 @@ package org.coolshooter.entity;
 
 import javax.swing.*;
 
-import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.trait.Collidable;
 import org.coolshooter.entity.trait.Controllable;
 
@@ -49,9 +48,12 @@ public class EntityManager {
 
         // Initialize and add queued entities
         if (!entitiesToAdd.isEmpty()) {
-            entitiesToAdd.forEach(Entity::init);
+            List<Entity> snapshotEntitiesToAdd = new ArrayList<>(entitiesToAdd);
+
+            snapshotEntitiesToAdd.forEach(Entity::init);
             entities.addAll(entitiesToAdd);
             entitiesToAdd.clear();
+            snapshotEntitiesToAdd.clear();
         }
     }
 

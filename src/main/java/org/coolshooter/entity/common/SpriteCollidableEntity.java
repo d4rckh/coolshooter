@@ -109,13 +109,13 @@ public class SpriteCollidableEntity extends RenderableEntity implements Collidab
         g2.setStroke(new BasicStroke(2));
 
         // get collision shape in WORLD coordinates, then convert to SCREEN
-        Shape worldShape = this.getCollisionShape();
-        Rectangle2D r = worldShape.getBounds2D();
+        // Shape worldShape = this.getCollisionShape();
+        // Rectangle2D r = worldShape.getBounds2D();
 
-        int screenX = (int) getGame().getCamera().toScreenX(r.getX());
-        int screenY = (int) getGame().getCamera().toScreenY(r.getY());
-        int screenW = (int) (r.getWidth() * getGame().getCamera().getZoom());
-        int screenH = (int) (r.getHeight() * getGame().getCamera().getZoom());
+        // int screenX = (int) getGame().getCamera().toScreenX(r.getX());
+        // int screenY = (int) getGame().getCamera().toScreenY(r.getY());
+        // int screenW = (int) (r.getWidth() * getGame().getCamera().getZoom());
+        // int screenH = (int) (r.getHeight() * getGame().getCamera().getZoom());
 
         // g2.drawRect(screenX, screenY, screenW, screenH);
 

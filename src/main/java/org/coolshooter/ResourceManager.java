@@ -72,6 +72,10 @@ public class ResourceManager {
         sprites.put("player", player.frames);
         Sprite enemy1 = loadSpriteSheet("/enemy.png", 1, 2);
         sprites.put("enemy1", enemy1.frames);
+        Sprite tank = loadSpriteSheet("/tank.png", 1, 2);
+        sprites.put("tank", tank.frames);
+        Sprite fast_chaser = loadSpriteSheet("/fast_chaser.png", 1, 2);
+        sprites.put("fast_chaser", fast_chaser.frames);
     }
 
     /**

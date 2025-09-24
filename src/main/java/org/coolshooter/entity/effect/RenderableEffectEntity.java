@@ -7,7 +7,6 @@ import java.awt.*;
 
 import org.coolshooter.Game;
 import org.coolshooter.Position;
-import org.coolshooter.entity.common.BasicShapeCollidableEntity;
 import org.coolshooter.entity.common.RenderableEntity;
 
 public class RenderableEffectEntity extends RenderableEntity {

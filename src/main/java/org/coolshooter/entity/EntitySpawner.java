@@ -4,6 +4,7 @@ import org.coolshooter.Game;
 import org.coolshooter.Position;
 import org.coolshooter.entity.collectible.HealthCollectibleEntity;
 import org.coolshooter.entity.player.NPCEntity;
+import org.coolshooter.entity.player.NPCFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,9 @@ public class EntitySpawner {
         double offsetX = (Math.random() - 0.5) * 1000;
         double offsetY = (Math.random() - 0.5) * 1000;
 
-        NPCEntity npc = new NPCEntity(game, new Position(playerX + offsetX, playerY + offsetY), game.getUserPlayerEntity());
+        NPCEntity npc = NPCFactory.createRandomNPC(game, new Position(playerX + offsetX, playerY + offsetY),
+                game.getUserPlayerEntity());
+
         game.getEntityManager().addEntity(npc);
 
         log.info("Spawning NPC at ({}, {})", npc.getPosition().getX(), npc.getPosition().getY());
