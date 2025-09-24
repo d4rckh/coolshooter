@@ -18,7 +18,7 @@ public class UserPlayerEntity extends PlayerEntity implements Controllable {
     private double dirY = 0;
 
     public UserPlayerEntity(Game game) {
-        super(game, 500, 500);
+        super(game, 500, 500, "player");
         setColor(Color.blue);
         setWidth(50);
         setSpeed(400);

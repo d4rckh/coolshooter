@@ -70,6 +70,8 @@ public class ResourceManager {
         // Load user_player.png (2 columns × 1 row)
         Sprite player = loadSpriteSheet("/user_player.png", 2, 1);
         sprites.put("player", player.frames);
+        Sprite enemy1 = loadSpriteSheet("/enemy.png", 1, 2);
+        sprites.put("enemy1", enemy1.frames);
     }
 
     /**

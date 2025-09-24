@@ -15,7 +15,7 @@ public class NPCEntity extends PlayerEntity {
     private double shootCooldown = 1;
 
     public NPCEntity(Game game, Position position, RenderableEntity entityToFollow) {
-        super(game, position.getX(), position.getY());
+        super(game, position.getX(), position.getY(), "enemy1");
         this.entityToFollow = entityToFollow;
         setColor(Color.RED);
         setWidth(90);

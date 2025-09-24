@@ -27,8 +27,8 @@ public abstract class PlayerEntity extends SpriteCollidableEntity {
     private double knockbackVX = 0;
     private double knockbackVY = 0;
 
-    public PlayerEntity(Game game, double worldX, double worldY) {
-        super(game, worldX, worldY, "player");
+    public PlayerEntity(Game game, double worldX, double worldY, String spriteName) {
+        super(game, worldX, worldY, spriteName);
     }
 
     @Override
